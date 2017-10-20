@@ -1,20 +1,23 @@
-// zona de variables
+//nw
 var vOpciones;
 var vMenu;
 var vJuego;
+var inpDinero;
 var centro;
 var jugadores;
 var baraja;
 var dineroTotal = 0;
 var k = 0;    //k identifica el turno del jugador
 var ronda = 1;
-// esta funcion se declara en el html, tomando los valores para contruir la visualización.
+var ciegaG = 10;
+
+
 function construir() {
   construirVistas();
   baraja = llenarBaraja();
   mostrar(vMenu);
 }
-//en esta funcion arrancamos el juego, esta hereda desde validarImput() al precionar el botón.
+
 function iniciar() {
   ocultar(vMenu);
   var n = parseInt(document.getElementById('inpJ').value);
@@ -24,41 +27,23 @@ function iniciar() {
   mostrar(vOpciones);
   sombrear(k);
 }
-// aqui se valida el Imput y se controla que el usuario solo pueda ingresar numeros entre 2 y 10.
-function validarInput() {
-  var numero=document.getElementById('inpJ').value;
-  if (numero<=10&&numero>=2) {
-    iniciar();
-  }else {
-    alert("Debe introcucir numeros del 2 al 10");
-    window.location.reload();
-    return document.getElementById('inpJ').value=2;
-  };
-}
-// manejo de la visualizacion de la mesa.
-function construirVistas() {
-  vMenu = document.getElementById('vMenu');
-  vJuego = document.getElementById('vJuego');
-  vOpciones = document.getElementById('vOpciones');
-  centro = document.getElementById('centro');
-}
-//herencia de familia hacia carta.
+
+
 function Familia(sNombre) {
   this.familia = sNombre;
 }
 
-function Carta(sFamilia,sNombre,iValor){// atributos de cartas
+function Carta(sFamilia,sNombre,iValor){
   Familia.call(this,sFamilia);
   this.nombre = sNombre;
   this.valor = iValor;
 }
-// se busca la imagen para mostrar
 Carta.prototype = new Familia();
 Carta.prototype.obtenerDireccion = function() {
   var direccion = "images/"+this.familia+"/"+this.valor+".png";
   return direccion;
 };
-// se crean arreglos para cada familia de cartas
+
 function llenarFamilia(sFam) {
   var a = new Array();
     for (var nombre = 2; nombre <= 10; nombre++) {
@@ -75,7 +60,8 @@ function llenarFamilia(sFam) {
     a.push(oA);
     return a;
 }
-// se crea un bucle para llenar un array con la clase jugador definida desde html en el menu de usuario
+
+
 function llenarJugadores(n) {
   var aJugadores = new Array();
   for (var i = 0; i < n; i++) {
@@ -90,19 +76,51 @@ function Jugador() {
   this.dinero = 2000;                  //dinero inicial
   this.mano;
 }
-// usamos prototype para crear una funcion que nos identifique la mano del jugador
-//por medio de un arreglo.
 Jugador.prototype.repartir = function(aComunes) {
   if (typeof this.mano == "undefined") {
-    this.mano = new Array();
+    this.mano = new Mano();
     for (var i = 0; i < 2; i++) {
-      this.mano.push(sacarCarta());
+      this.mano.cartas.push(sacarCarta());
     }
   }else {
-    this.mano = this.mano.concat(aComunes);
+    this.mano.cartas = this.mano.cartas.concat(aComunes);
   }
 };
-// en esta función mostramos una carta, recorremos el arreglo y obtenemos la direccion de la imagen
+
+function Mano() {
+  this.nombre = "Carta Alta";
+  this.valor = 1;
+  this.cartas = new Array();
+}
+Mano.prototype.obtenerValores = function() {
+  var n = new Array();
+  for (var i = 0; i < this.cartas.length; i++) {
+    n.push(+this.cartas[i].valor);
+  }
+  return n;
+};
+Mano.prototype.obtenerFamilias = function() {
+  var n = new Array();
+  for (var i = 0; i < this.cartas.length; i++) {
+    n.push(this.cartas[i].familia);
+  }
+  return n;
+}
+Mano.prototype.establecerMano = function(sNombre,iValor) {
+  if (typeof this.nombre == "undefined" || typeof this.valor == "undefined") {
+    this.nombre = sNombre;
+    this.valor = iValor;
+  }else if(this.valor < iValor){
+    this.nombre = sNombre;
+    this.valor = iValor;
+  }
+};
+Mano.prototype.obtenerCartaAlta = function() {
+  var a = this.obtenerValores();
+  a = a.sort(function(a, b){return b-a});
+  return a[0];
+}
+
 function flop(){
   var a = new Array();
   for (var i = 0; i < 3; i++) {
@@ -113,7 +131,6 @@ function flop(){
   return a;
 }
 
-// anidando las funciones recorremos un arreglo para obtener una nueva carta
 function nuevaCarta(){
   var a = new Array();
   a.push(sacarCarta());
@@ -121,8 +138,45 @@ function nuevaCarta(){
   centro.appendChild(img);
   return a;
 }
-// es esta funcion creamos una clase jugador y agregamos una lista a html dependiendo la cantidad
-// de jugadores asi se definira elradio de la mesa para posicionar las cartas.
+
+function pasar() {
+  verificarRonda();
+  actualizarJugadores();
+}
+
+function apostar() {
+  var c = document.getElementById('dinero');
+  dinero = parseInt(inpDinero.value);
+  if (k==0) {
+    ciegaG = 2*dinero;
+  }
+  if (k==1) {
+    dinero = ciegaG;
+  }
+  jugadores[k].dinero -= dinero;
+  dineroTotal += dinero;
+  c.innerHTML = "Dinero: "+dineroTotal;
+  inpDinero.min = ciegaG;
+  verificarRonda();
+  actualizarJugadores();
+  if (k==1) {
+    apostar();
+  }
+}
+
+function retirarse() {
+  try {
+    jugadores.splice(k,1);
+    var ul = document.getElementById('ls');
+    ul.removeChild(ul.childNodes[k]);
+    k--;
+    verificarRonda();
+    actualizarJugadores();
+  } catch (e) {
+    alert("Se acabo pues");
+  }
+}
+
 function actualizarJugadores() {
   var n = jugadores.length;
   var l = document.getElementsByClassName('jugador').length;
@@ -150,9 +204,15 @@ function actualizarJugadores() {
   }
 
 }
-// por medio de la clase jugador volvemos a crear elementos a una lista en html
-// esta vez para mostrar las mano del jugador.
+
 function mostrarJugador() {
+  if (k!=0) {
+    inpDinero.value = ciegaG;
+    inpDinero.max = jugadores[k].dinero;
+  }else {
+    inpDinero.value = 10;
+    inpDinero.max = 1000;
+  }
   var ul = document.getElementById('ls');
   var radianes = posicionDeJugador();
 
@@ -160,7 +220,7 @@ function mostrarJugador() {
   li.setAttribute("class","jugador");
 
   for (var j = 0; j <= 1;j++) {
-    var img = nuevaImagen(jugadores[k].mano[j].obtenerDireccion());
+    var img = nuevaImagen(jugadores[k].mano.cartas[j].obtenerDireccion());
     li.appendChild(img);
   }
   rotar(li,radianes);
@@ -169,7 +229,7 @@ function mostrarJugador() {
   sombrear(k);
   return radianes;
 }
-// funcion angular para colocar a los jugadores en la mesa
+
 function posicionDeJugador() {
   var n = jugadores.length;
   var radianes = Math.PI;     //valor inicial
@@ -180,11 +240,10 @@ function posicionDeJugador() {
   return radianes;
 }
 
-// se agrega propiedad al css para que rote las cartas dependiendo su posicion
+
 function rotar(o,fRadianes) {
     o.style.transform = "rotate("+fRadianes+"rad)";   //recibe el objeto a rotar y los grados que se le van a aplicar
 }
-// se usa esta funcion para colocar en la ventana la figura circular de perimetro de cartas
 function posicionarEnCirculo(o,fRadianes,r,b,a) {
     //objeto,distancia angular,radio,desplazamiento en x,desplazamiento en y
     var x = Math.ceil(r+r*Math.sin(fRadianes));        //equacion para el atributo top
@@ -196,7 +255,7 @@ function posicionarEnCirculo(o,fRadianes,r,b,a) {
     o.style.top = y+"px";
 }
 
-// lenamos las barajas con su respectiva familia
+
 function llenarBaraja() {
   var aBaraja = new Array();
   aBaraja = aBaraja.concat(llenarFamilia("diamantes")); //
@@ -205,7 +264,6 @@ function llenarBaraja() {
   aBaraja = aBaraja.concat(llenarFamilia("espadas"));
   return aBaraja
 }
-// para entregar cartas aleataoriamente a los jugadores
 function sacarCarta() {
   //asigna la cantidad actual de cartas disponibles
   var n = baraja.length;
@@ -217,7 +275,6 @@ function sacarCarta() {
   baraja.splice(indx,1);
   return carta;
 }
-
 
 //funcion para validar solo numeros enteros
 function soloNumeros( evt ){
@@ -233,106 +290,126 @@ function soloNumeros( evt ){
   }
 }
 
+function validarInput() {
+  var numero=document.getElementById('inpJ').value;
+  if (numero<=10&&numero>=2) {
+    iniciar();
+  }else {
+    alert("Debe introcucir numeros del 2 al 10");
+    window.location.reload();
+    return document.getElementById('inpJ').value=2;
+  };
+}
+
 function ocultar(elemento) {
   elemento.style.display = "none";
   /* style.display:establece la propiedad de visualización del elemento al valor predeterminado,
   es decir que elimina la visualización y luego la reestablece en linea tomando en cuenta
   que esto es establecido en el CSS*/
 }
-// esta funcion altera cambios directos a css
 function mostrar(elemento) {
   elemento.style.display = "block";
 }
 
-// funcion pasar durante el juego
-function pasar() {
-  verificarRonda();
-  actualizarJugadores();
-  verificarManoGanadora();
+
+
+function verificarRonda() {
+  var n = (jugadores.length-1);
+  if (k==n) {
+    switch (ronda) {
+      case 1:
+          var cFlop = flop();
+          for (var i = 0; i < jugadores.length; i++) {
+            jugadores[i].repartir(cFlop);
+            llenarMano(i);
+          }
+        break;
+      case 2:
+          var cTurn = nuevaCarta();
+          for (var i = 0; i < jugadores.length; i++) {
+            jugadores[i].repartir(cTurn);
+            llenarMano(i);
+          }
+        break;
+      case 3:
+          var cRiver = nuevaCarta();
+          for (var i = 0; i < jugadores.length; i++) {
+            jugadores[i].repartir(cRiver);
+            llenarMano(i);
+          }
+        break;
+      case 4:
+          var z = verificarGanador();
+          var mano =jugadores[z].mano.nombre;
+          var p = z+1;
+          alert("Felicidades! Jugador "+(p)+ " tienes "+mano+" ganastes : $"+dineroTotal);
+        break;
+    }
+    k=0;
+    ciegaG = 10;
+    inpDinero.min = ciegaG;
+    ronda++;
+  }else {
+    k++;
+  }
 }
-// agregamos sombra a lacarta de jugador activo
+
+function verificarGanador() {
+  var max = 0;
+  var z;
+  for (var i = 0; i < jugadores.length; i++) {
+    var actual = jugadores[i].mano.valor;
+    if (actual > max) {
+      z = i;
+      max = actual;
+    }else if (actual == max) {
+      var mActual = jugadores[i].mano;
+      var mMax = jugadores[z].mano;;
+      switch (mActual.valor) {
+        case 1://caso para carta alta
+          if (mActual.obtenerCartaAlta()>mMax.obtenerCartaAlta()) {
+            z=i;
+          }
+          break;
+        case 2://caso para pareja
+
+          break;
+        case 3://caso para pareja doble
+
+          break;
+        case 4://caso para trio
+
+          break;
+        case 5://caso para escalera
+
+          break;
+      }
+    }
+  }
+  return z;
+
+}
+
+function construirVistas() {
+  vMenu = document.getElementById('vMenu');
+  vJuego = document.getElementById('vJuego');
+  vOpciones = document.getElementById('vOpciones');
+  centro = document.getElementById('centro');
+  inpDinero = document.getElementById('inpDinero');
+}
 function sombrear(i) {
   var ul = document.getElementsByClassName('jugador'); //los divs que corresponden al jugador
   ul[i].style.boxShadow = "0px 0px 45px rgba(255, 1, 255, 0.8)";
 }
-//hacemos una comparacion entre los jugadores
-function verificarManoGanadora() {
 
-  var mano = jugadores[k].mano;
-  verificarEscalera(mano);
+function llenarMano(i) {
 
-  if (esMismaFam(mano)) {
-    alert("tienes una familia");
-  }
+  var mano = jugadores[i].mano;
+    if (esMismaFam(mano)) {
+    mano.establecerMano("color",6);
+    }
   cuantasIguales(mano);
-}
-//usamos un switch para definir si el jugador tiene trios o pares en su mano para ganar
-
-function cuantasIguales(aMano) {
-    var a = obtenerValores(aMano).sort();
-    var pares = 0;
-    var trio = false;
-    var iguales;
-    for (var i = 0; i < 5; i++) {
-      iguales = 0;
-      for (var j = (i+1); j < a.length-1; j++) {
-        if (a[i] == a[j]) {
-          iguales++;
-        }
-      }
-      switch (iguales) {
-        case 1:
-            pares++;
-          break;
-        case 2:
-            pares--;
-            trio = true;
-          break;
-        case 3:
-            trio = false;
-            alert("Tienes un poker");
-          break;
-      }
-    }
-    if (pares>0) {
-      alert("Tienes "+pares+" par");
-    }
-    if (trio) {
-      alert("Tienes un trio");
-    }
-
-}
-
-
-
-
-
-
-
-function apostar() {
-  var inpDinero = document.getElementById('inpDinero'); //este es el input de las apuestas
-  var c = document.getElementById('dinero');
-
-  dinero = parseInt(inpDinero.value);
-  if (dinero > jugadores[k].dinero) {
-    alert("No tiene suficiente dinero");
-    return;
-  }
-  jugadores[k].dinero -= dinero;
-  dineroTotal += dinero;               //dineroTotal es el de el centro de la mesa
-  c.innerHTML = "Dinero: "+dineroTotal;
-
-  verificarRonda();
-  actualizarJugadores();
-}
-
-function retirarse() {
-  jugadores.splice(k,1);
-  var ul = document.getElementById('ls');
-  ul.removeChild(ul.childNodes[k]);
-  k--;
-  verificarRonda();
-  actualizarJugadores();
+  verificarEscalera(mano);
 }
 
 function verificarEscalera(mano) {
@@ -416,11 +493,8 @@ function cuantasIguales(mano) {
     if (trio && (pares>0)) {
       mano.establecerMano("Full house",7);
     }else if (poker) {
-
-
       mano.establecerMano("Poker",8);
     }
-
 }
 
 
