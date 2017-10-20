@@ -169,6 +169,142 @@ function mostrarJugador() {
   sombrear(k);
   return radianes;
 }
+// funcion angular para colocar a los jugadores en la mesa
+function posicionDeJugador() {
+  var n = jugadores.length;
+  var radianes = Math.PI;     //valor inicial
+  var h = 2*Math.PI/n;    //distancia angular entre elemntos;
+  for (var i = 0; i < k; i++) {
+    radianes += h;
+  }
+  return radianes;
+}
+
+// se agrega propiedad al css para que rote las cartas dependiendo su posicion
+function rotar(o,fRadianes) {
+    o.style.transform = "rotate("+fRadianes+"rad)";   //recibe el objeto a rotar y los grados que se le van a aplicar
+}
+// se usa esta funcion para colocar en la ventana la figura circular de perimetro de cartas
+function posicionarEnCirculo(o,fRadianes,r,b,a) {
+    //objeto,distancia angular,radio,desplazamiento en x,desplazamiento en y
+    var x = Math.ceil(r+r*Math.sin(fRadianes));        //equacion para el atributo top
+    var y = Math.ceil(r-r*Math.cos(fRadianes));        //equacion para el atributo left
+    x += 195*Math.sin(fRadianes);                    //estira en x
+    x+=b;                                       //b desplazamiento en x
+    y+=a;                                       //a desplazamiento en y
+    o.style.left = x+"px";
+    o.style.top = y+"px";
+}
+
+// lenamos las barajas con su respectiva familia
+function llenarBaraja() {
+  var aBaraja = new Array();
+  aBaraja = aBaraja.concat(llenarFamilia("diamantes")); //
+  aBaraja = aBaraja.concat(llenarFamilia("corazones"));
+  aBaraja = aBaraja.concat(llenarFamilia("treboles"));
+  aBaraja = aBaraja.concat(llenarFamilia("espadas"));
+  return aBaraja
+}
+// para entregar cartas aleataoriamente a los jugadores
+function sacarCarta() {
+  //asigna la cantidad actual de cartas disponibles
+  var n = baraja.length;
+  //genera un numero aleatorio de entre(n-1)opciones
+  var indx = Math.floor(Math.random()*(n-1));
+  //crea una copia del contenido de baraja en la posicion index
+  var carta = baraja[indx];
+  //elimina el elemento de la baraja, para que no se vuelva a asignar
+  baraja.splice(indx,1);
+  return carta;
+}
+
+
+//funcion para validar solo numeros enteros
+function soloNumeros( evt ){
+  if ( window.event ) {
+    keyNum = evt.keyCode;
+  } else {
+    keyNum = evt.which;
+  }
+  if ( keyNum >= 48 && keyNum <= 57 ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function ocultar(elemento) {
+  elemento.style.display = "none";
+  /* style.display:establece la propiedad de visualización del elemento al valor predeterminado,
+  es decir que elimina la visualización y luego la reestablece en linea tomando en cuenta
+  que esto es establecido en el CSS*/
+}
+// esta funcion altera cambios directos a css
+function mostrar(elemento) {
+  elemento.style.display = "block";
+}
+
+// funcion pasar durante el juego
+function pasar() {
+  verificarRonda();
+  actualizarJugadores();
+  verificarManoGanadora();
+}
+// agregamos sombra a lacarta de jugador activo
+function sombrear(i) {
+  var ul = document.getElementsByClassName('jugador'); //los divs que corresponden al jugador
+  ul[i].style.boxShadow = "0px 0px 45px rgba(255, 1, 255, 0.8)";
+}
+//hacemos una comparacion entre los jugadores
+function verificarManoGanadora() {
+
+  var mano = jugadores[k].mano;
+  verificarEscalera(mano);
+
+  if (esMismaFam(mano)) {
+    alert("tienes una familia");
+  }
+  cuantasIguales(mano);
+}
+//usamos un switch para definir si el jugador tiene trios o pares en su mano para ganar
+
+function cuantasIguales(aMano) {
+    var a = obtenerValores(aMano).sort();
+    var pares = 0;
+    var trio = false;
+    var iguales;
+    for (var i = 0; i < 5; i++) {
+      iguales = 0;
+      for (var j = (i+1); j < a.length-1; j++) {
+        if (a[i] == a[j]) {
+          iguales++;
+        }
+      }
+      switch (iguales) {
+        case 1:
+            pares++;
+          break;
+        case 2:
+            pares--;
+            trio = true;
+          break;
+        case 3:
+            trio = false;
+            alert("Tienes un poker");
+          break;
+      }
+    }
+    if (pares>0) {
+      alert("Tienes "+pares+" par");
+    }
+    if (trio) {
+      alert("Tienes un trio");
+    }
+
+}
+
+
+
 
 
 
