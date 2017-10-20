@@ -47,7 +47,7 @@ function Familia(sNombre) {
   this.familia = sNombre;
 }
 
-function Carta(sFamilia,sNombre,iValor){// atributos de cartas 
+function Carta(sFamilia,sNombre,iValor){// atributos de cartas
   Familia.call(this,sFamilia);
   this.nombre = sNombre;
   this.valor = iValor;
@@ -92,3 +92,30 @@ function Jugador() {
 }
 
 
+
+
+function apostar() {
+  var inpDinero = document.getElementById('inpDinero'); //este es el input de las apuestas
+  var c = document.getElementById('dinero');
+
+  dinero = parseInt(inpDinero.value);
+  if (dinero > jugadores[k].dinero) {
+    alert("No tiene suficiente dinero");
+    return;
+  }
+  jugadores[k].dinero -= dinero;
+  dineroTotal += dinero;               //dineroTotal es el de el centro de la mesa
+  c.innerHTML = "Dinero: "+dineroTotal;
+
+  verificarRonda();
+  actualizarJugadores();
+}
+
+function retirarse() {
+  jugadores.splice(k,1);
+  var ul = document.getElementById('ls');
+  ul.removeChild(ul.childNodes[k]);
+  k--;
+  verificarRonda();
+  actualizarJugadores();
+}
