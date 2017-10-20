@@ -121,7 +121,7 @@ function nuevaCarta(){
   centro.appendChild(img);
   return a;
 }
-// es esta funcion creamos una clase jugador y agregamos una lista a html dependiendo la cantidad 
+// es esta funcion creamos una clase jugador y agregamos una lista a html dependiendo la cantidad
 // de jugadores asi se definira elradio de la mesa para posicionar las cartas.
 function actualizarJugadores() {
   var n = jugadores.length;
@@ -333,4 +333,101 @@ function retirarse() {
   k--;
   verificarRonda();
   actualizarJugadores();
+}
+
+function verificarEscalera(mano) {
+  var a = mano.obtenerValores();
+  a = a.sort(function(a, b){return a-b});
+  var c = 0;
+  var i = 0;
+  while ((i < a.length-1) && (c != 4)) {
+    if (a[i]+1 == a[i+1]) {
+      c++;
+    }else if(a[i] != a[i+1]){
+      c = 0;
+    }
+    i++;
+  }
+
+  if (c == 4 ) {
+    if (a[c] == 14) {
+      mano.establecerMano("Escalera Real",10);
+    }else if (esMismaFam(mano)) {
+      mano.establecerMano("Escalera de color",9);
+    }else {
+      mano.establecerMano("Escalera",5);
+    }
+  }
+}
+
+function esMismaFam(mano) {
+  var a = mano.obtenerFamilias().sort();
+  var iguales = 0;
+  for (var i = 0; i <= 5; i++) {
+    for (var j = (i+1); j < a.length; j++) {
+      if (a[i] == a[j]) {
+        iguales++;
+      }
+    }
+    if (iguales >= 4) {
+      return true;
+    }else {
+      iguales = 0;
+    }
+  }
+  return false;
+}
+
+function cuantasIguales(mano) {
+    var a = mano.obtenerValores().sort(function(a, b){return a-b});
+    var pares = 0;
+    var trio = false;
+    var poker = false;
+    var iguales;
+    for (var i = 0; i <= 5; i++) {
+      iguales = 0;
+      for (var j = (i+1); j < a.length; j++) {
+        if (a[i] == a[j]) {
+          iguales++;
+        }
+      }
+      switch (iguales) {
+        case 1:
+            pares++;
+          break;
+        case 2:
+            pares--;
+            trio = true;
+          break;
+        case 3:
+            trio = false;
+            poker = true;
+          break;
+      }
+    }
+    if (pares == 1) {
+      mano.establecerMano("Par",2);
+    }
+    if (pares == 2) {
+      mano.establecerMano("Doble Par",3);
+    }else if (trio) {
+      mano.establecerMano("Trio",4);
+    }
+    if (trio && (pares>0)) {
+      mano.establecerMano("Full house",7);
+    }else if (poker) {
+
+
+      mano.establecerMano("Poker",8);
+    }
+
+}
+
+
+
+
+function nuevaImagen(sAtributo) {
+  var img = document.createElement("img");
+  img.setAttribute("src",sAtributo);
+  return img;
 }
