@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="juego de poker">
+  <meta name="keywords" content="juego de poker">
+  <meta name="author" content="kevinHernande7, brahhms">
+  <link rel="stylesheet" href="css/estilos.css">
+  <title>Texas Holdem </title>
+    <title></title>
+  </head>
+  <body onload="construir()">
+    <div id="vMenu">
+    <h1 class="menuItem" >Men&uacute;</h1>
+    <label for="inpJ" class="menuItem">Jugadores: </label>
+    <input id="inpJ" type="number" class="menuItem" min="2" max="10" value="2" onkeypress="soloNumeros(event)">
+    <button type="button" onclick="validarInput( )"  class="menuItem">Iniciar</button>
+</div>
+
+
+<div id="vJuego" class="mesa">
+  <ul id="ls"></ul>
+  <div id="centro" >
+    <p id="dinero"><br/></p>
+  </div>
+</div>
+
+
+  </body>
+</html>
