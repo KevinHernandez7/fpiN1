@@ -42,3 +42,53 @@ function construirVistas() {
   vOpciones = document.getElementById('vOpciones');
   centro = document.getElementById('centro');
 }
+//herencia de familia hacia carta.
+function Familia(sNombre) {
+  this.familia = sNombre;
+}
+
+function Carta(sFamilia,sNombre,iValor){// atributos de cartas 
+  Familia.call(this,sFamilia);
+  this.nombre = sNombre;
+  this.valor = iValor;
+}
+// se busca la imagen para mostrar
+Carta.prototype = new Familia();
+Carta.prototype.obtenerDireccion = function() {
+  var direccion = "images/"+this.familia+"/"+this.valor+".png";
+  return direccion;
+};
+// se crean arreglos para cada familia de cartas
+function llenarFamilia(sFam) {
+  var a = new Array();
+    for (var nombre = 2; nombre <= 10; nombre++) {
+      var oCarta = new Carta(sFam,nombre,nombre);
+      a.push(oCarta);
+    }
+    var oJ = new Carta(sFam,"J",11);
+    a.push(oJ);
+    var oQ = new Carta(sFam,"Q",12);
+    a.push(oQ);
+    var oK = new Carta(sFam,"K",13);
+    a.push(oK);
+    var oA = new Carta(sFam,"A",14);
+    a.push(oA);
+    return a;
+}
+// se crea un bucle para llenar un array con la clase jugador definida desde html en el menu de usuario
+function llenarJugadores(n) {
+  var aJugadores = new Array();
+  for (var i = 0; i < n; i++) {
+    var oJugador = new Jugador();
+    oJugador.repartir();
+    aJugadores.push(oJugador);
+  }
+  return aJugadores;        //devuelve un arreglo con los jugadores
+}
+
+function Jugador() {
+  this.dinero = 2000;                  //dinero inicial
+  this.mano;
+}
+
+
