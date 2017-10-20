@@ -1,0 +1,96 @@
+
+body{
+  color: #E8E8E7;
+  background: #313438;
+  padding: 0;
+}
+
+
+#inpJ{
+  background-color: #584F52;
+}
+
+#vMenu{
+  position: relative;
+  top: 10em;
+  margin: 0 auto 0 auto;
+  text-align: center;
+}
+
+.ulOpciones li{
+  display:  inline-block;
+}
+.ulOpciones li:hover {
+    background-color: rgba(92, 186, 237, 0.4);
+}
+
+
+#vOpciones{
+  display: none;
+  text-align: center;
+  background: rgba(0,0,0,0.3);
+  margin: 0;
+  width: 100%;
+  padding: 0;
+}
+
+.ulOpciones input{
+  width: 100px;
+  background-color: #4C4F53;
+}
+
+img{
+  height: 60px;
+  width: 40px;
+  margin: 1px;
+}
+
+
+#centro {
+  color: #efefef;
+  padding-top: 5px;
+  font-size: 2em;
+  position: relative;
+  top: 30%;
+  margin: 0 auto 0 auto;
+  width: 50%;
+  height: 200px;
+  border-radius: 10%;
+  background: rgba(0,0,0,0.05);
+}
+
+.mesa {
+  display: none;
+  background: #4C4F53;
+  margin: 0 auto 0 auto;
+  width: 900px;
+  height: 500px;
+  border-radius: 35%;
+  box-shadow:  0px 0px 70px rgba(0,0,0,0.4);
+  -webkit-box-shadow:  0px 0px 70px rgba(0,0,0,0.4);
+  position: relative;
+  text-align: center;
+}
+
+li {
+    list-style-type: none;
+}
+
+#vJuego li {
+  position: absolute;
+  height: 60px;
+  text-align: center;
+}
+
+
+.info p{
+  position: absolute;
+  color: white;
+}
+
+.menuItem{
+  border: 0;
+  font-size: 2em;
+  color: #E8E8E7;
+  background-color:transparent;
+}
