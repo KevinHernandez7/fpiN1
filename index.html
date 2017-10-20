@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html>
   <head>
-  	<meta charset="utf-8">
-  	<meta name="viewport" content="width=device-width">
-  	<meta name="description" content="juego de poker">
-  	<meta name="keywords" content="juego de poker">
-  	<meta name="author" content="kevinHernande7, Brahhms,VictoriaCastro">
-  	<link rel="stylesheet" href="css/estilos.css">
-  	<title>Juego Texas Hold&#39;em </title>
-    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="juego de poker">
+    <meta name="keywords" content="juego de poker">
+    <meta name="author" content="kevinHernande7, brahhms">
+    <link rel="stylesheet" href="css/estilos.css">
+    <title>Texas Holdem </title>
+
   </head>
-	
-  <body onload="construir()"><!-- enlazando para cambiar diseño-->
-	  <!-- Inicio contenedor de menu principal-->
-     <div id="vMenu">
-    	<h1 class="menuItem" >Men&uacute;</h1>
-    	<label for="inpJ" class="menuItem">Jugadores: </label>
-    	<input id="inpJ" type="number" class="menuItem" min="2" max="10" value="2" onkeypress="soloNumeros(event)">
-    	<button type="button" onclick="validarInput( )"  class="menuItem">Iniciar</button>
-	 </div>
-	<!-- Contenedor de vista de juego-->
-	  <div id="vJuego" class="mesa">
-      		<ul id="ls"></ul>
-      			<div id="centro" >
-        			<p id="dinero"><br/></p>
-      			</div>
-		</div> 
-	<!-- Contenedor de menu de apuesta-->
-	  <div id="vOpciones">
-       		<ul class="ulOpciones">
-         		<li><input id="inpDinero" type="number" class="menuItem" max="2000" min="10" step="10"></li>
-         		<li id="apostar"  class="menuItem">Apostar</li>
-         		<li id="pasar" class="menuItem" >Pasar</li>
-         		<li id="retirarse"  class="menuItem" >Retirarse</li>
-       		</ul>
-     	</div> 
-	<script type="text/javascript" src="script.js"></script> <!-- enlazando al BOM (script)-->
+  <body onload="construir()">
+    <div id="vMenu">
+        <h1 class="menuItem" >Men&uacute;</h1>
+        <label for="inpJ" class="menuItem">Jugadores: </label>
+        <input id="inpJ" type="number" class="menuItem" min="2" max="10" value="2" onkeypress="soloNumeros(event)">
+        <button type="button" onclick="validarInput( )"  class="menuItem">Iniciar</button>
+    </div>
+
+
+    <div id="vJuego" class="mesa">
+      <ul id="ls"></ul>
+      <div id="centro" >
+        <p id="dinero"><br/></p>
+      </div>
+    </div>
+
+
+    <div id="vOpciones">
+       <ul class="ulOpciones">
+         <li><input id="inpDinero" type="number" class="menuItem" max="2000" min="10" step="10"></li>
+         <li id="apostar" onclick="apostar()" class="menuItem">Apostar</li>
+         <li id="pasar" onclick="pasar()" class="menuItem" >Pasar</li>
+         <li id="retirarse" onclick="retirarse()" class="menuItem" >Retirarse</li>
+       </ul>
+     </div>
+
+
+
+<script type="text/javascript" src="script.js"></script>
+
+
   </body>
+
 </html>
