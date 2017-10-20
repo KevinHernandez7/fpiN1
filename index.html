@@ -10,14 +10,14 @@
 		<title>Juego Texas Hold&#39;em </title>
 	</head>
 
-	<body > <!-- Constructor de menu principal-->
+	<body body onload="construir()"> <!-- Constructor de menu principal-->
 		
 		<!-- Inicio contenedor de menu principal-->
 		<div id="vMenu">
 			<h1 class="menuItem" >Men&uacute;</h1>
         	<label for="inpJ" class="menuItem">Jugadores: </label>
         	<input id="inpJ" type="number" class="menuItem" min="2" max="10" value="2" onkeypress="soloNumeros(event)">
-        	<button type="button" onclick="validarInput( )"  class="menuItem">Iniciar</button>
+        	<button type="button" onclick="validarInput( )"class="menuItem">Iniciar</button>
 		</div> <!-- Fin menu principal-->
 		
 		<!-- Contenedor de vista de juego-->
