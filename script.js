@@ -90,5 +90,84 @@ function Jugador() {
   this.dinero = 2000;                  //dinero inicial
   this.mano;
 }
+// usamos prototype para crear una funcion que nos identifique la mano del jugador
+//por medio de un arreglo.
+Jugador.prototype.repartir = function(aComunes) {
+  if (typeof this.mano == "undefined") {
+    this.mano = new Array();
+    for (var i = 0; i < 2; i++) {
+      this.mano.push(sacarCarta());
+    }
+  }else {
+    this.mano = this.mano.concat(aComunes);
+  }
+};
+// en esta función mostramos una carta, recorremos el arreglo y obtenemos la direccion de la imagen
+function flop(){
+  var a = new Array();
+  for (var i = 0; i < 3; i++) {
+    a.push(sacarCarta());
+    var img = nuevaImagen(a[i].obtenerDireccion());
+    centro.appendChild(img);
+  }
+  return a;
+}
+
+// anidando las funciones recorremos un arreglo para obtener una nueva carta
+function nuevaCarta(){
+  var a = new Array();
+  a.push(sacarCarta());
+  var img = nuevaImagen(a[0].obtenerDireccion());
+  centro.appendChild(img);
+  return a;
+}
+// es esta funcion creamos una clase jugador y agregamos una lista a html dependiendo la cantidad 
+// de jugadores asi se definira elradio de la mesa para posicionar las cartas.
+function actualizarJugadores() {
+  var n = jugadores.length;
+  var l = document.getElementsByClassName('jugador').length;
+  var ul = document.getElementById('ls');
+  var radianes = Math.PI;
+  var h = 2*Math.PI/n;    //distancia angular entre elemntos;
+
+  for (var i = 0; i < n; i++) {
+    var li = document.createElement('li');
+    li.setAttribute("class","jugador");
+    for (var j = 0; j <= 1;j++) {
+      var img = nuevaImagen("images/back.png");
+      li.appendChild(img);
+    }
+    rotar(li,radianes);
+    posicionarEnCirculo(li,radianes,200,200,20);
+    radianes += h;
+
+    if (l == 0) {
+      ul.appendChild(li);
+    }else {
+      ul.replaceChild(li , ul.childNodes[i]);
+    }
+    mostrarJugador();
+  }
+
+}
+// por medio de la clase jugador volvemos a crear elementos a una lista en html
+// esta vez para mostrar las mano del jugador.
+function mostrarJugador() {
+  var ul = document.getElementById('ls');
+  var radianes = posicionDeJugador();
+
+  var li = document.createElement('li');
+  li.setAttribute("class","jugador");
+
+  for (var j = 0; j <= 1;j++) {
+    var img = nuevaImagen(jugadores[k].mano[j].obtenerDireccion());
+    li.appendChild(img);
+  }
+  rotar(li,radianes);
+  posicionarEnCirculo(li,radianes,200,200,20);
+  ul.replaceChild(li , ul.childNodes[k]);
+  sombrear(k);
+  return radianes;
+}
 
 
